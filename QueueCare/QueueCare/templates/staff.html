@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Staff Dashboard – QueueCare{% endblock %}
+{% block content %}
+<h2>Staff Dashboard</h2>
+<form method="get" class="bar">
+  <input type="date" name="date" value="{{ d }}">
+  <input name="q" value="{{ q }}" placeholder="Search patient name...">
+  <button class="btn">Filter</button>
+</form>
+
+<div class="stats">
+  {% for s in statuses %}<div class="stat"><small>{{ s }}</small><b>{{ counts[s] }}</b></div>{% endfor %}
+</div>
+
+<div class="tw card">
+<table>
+  <tr><th>Queue</th><th>Time</th><th>Patient</th><th>Service</th><th>Reason</th><th>Status &amp; Notes</th></tr>
+  {% for r in rows %}
+  <tr>
+    <td>#{{ r.queue_no }}</td><td>{{ r.slot }}</td>
+    <td>{{ r.patient }}<br><small class="muted">{{ r.phone }}</small></td>
+    <td>{{ r.service }}</td><td>{{ r.reason }}</td>
+    <td>
+      <form method="post" action="{{ url_for('update', appt_id=r.id) }}" class="inline">
+        <select name="status">
+          {% for s in statuses %}<option {{ 'selected' if s == r.status }}>{{ s }}</option>{% endfor %}
+        </select>
+        <input name="notes" value="{{ r.notes }}" placeholder="Consultation notes">
+        <button class="btn small">Save</button>
+      </form>
+    </td>
+  </tr>
+  {% else %}
+  <tr><td colspan="6" class="muted">No appointments for this date.</td></tr>
+  {% endfor %}
+</table>
+</div>
+{% endblock %}

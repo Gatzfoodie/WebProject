@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}My Appointments – QueueCare{% endblock %}
+{% block content %}
+<h2>My Appointments &amp; Health Records</h2>
+{% if not rows %}
+  <div class="card">No appointments yet. <a href="{{ url_for('book') }}">Book your first visit</a>.</div>
+{% endif %}
+{% for r in rows %}
+<div class="card appt">
+  <div>
+    <h3>{{ r.service }} <span class="badge {{ r.status|replace(' ', '') }}">{{ r.status }}</span></h3>
+    <p class="muted">{{ r.provider }} · {{ r.appt_date }} at {{ r.slot }} · Queue #{{ r.queue_no }}</p>
+    <p><b>Reason:</b> {{ r.reason }}</p>
+    {% if r.notes %}<p class="note"><b>Doctor's notes:</b> {{ r.notes }}</p>{% endif %}
+  </div>
+  {% if r.status == 'Booked' %}
+  <form method="post" action="{{ url_for('cancel', appt_id=r.id) }}"
+        onsubmit="return confirm('Cancel this appointment?')">
+    <button class="btn danger">Cancel</button>
+  </form>
+  {% endif %}
+</div>
+{% endfor %}
+{% endblock %}

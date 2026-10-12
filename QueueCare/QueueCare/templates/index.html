@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="hero">
+  <h1>Skip the long line. Book your health center visit online.</h1>
+  <p>Choose a service, pick a time slot, and get your queue number before you leave home.</p>
+  <a class="btn big" href="{{ url_for('book') if session.user_id else url_for('register') }}">Book an Appointment</a>
+  <p class="muted">Today's appointments: <b>{{ total }}</b></p>
+</section>
+
+<section class="grid3">
+  <div class="card"><h3>The Problem</h3>
+    <p>Patients line up for hours at the health center, and staff track visits on paper, causing delays and lost records.</p></div>
+  <div class="card"><h3>Target Users</h3>
+    <p>Residents and patients who need check-ups, and health center staff who manage the daily queue.</p></div>
+  <div class="card"><h3>Our Solution</h3>
+    <p>Online booking with fixed time slots, automatic queue numbers, and a staff dashboard with digital consultation notes.</p></div>
+</section>
+
+<h2>Available Services</h2>
+<div class="grid3">
+  {% for s in services %}
+  <div class="card"><h3>{{ s.name }}</h3><p class="muted">{{ s.provider }}</p></div>
+  {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Book – QueueCare{% endblock %}
+{% block content %}
+<form method="post" class="card form wide">
+  <h2>Book an Appointment</h2>
+  <label>Service
+    <select name="service_id" id="service" required>
+      <option value="">-- choose service --</option>
+      {% for s in services %}<option value="{{ s.id }}">{{ s.name }} – {{ s.provider }}</option>{% endfor %}
+    </select>
+  </label>
+  <label>Date<input type="date" name="appt_date" id="date" min="{{ today }}" required></label>
+  <div>
+    <b>Time slot</b>
+    <div id="slots" class="slots"><span class="muted">Select a service and date to see free slots.</span></div>
+  </div>
+  <label>Reason for visit<textarea name="reason" rows="3" required></textarea></label>
+  <button class="btn">Confirm Booking</button>
+</form>
+
+<script>
+const svc = document.getElementById('service'), dt = document.getElementById('date'),
+      box = document.getElementById('slots');
+async function loadSlots() {
+  if (!svc.value || !dt.value) return;
+  const r = await fetch(`/api/slots?service_id=${svc.value}&date=${dt.value}`);
+  const data = await r.json();
+  box.innerHTML = data.all.map(s => {
+    const taken = data.taken.includes(s);
+    return `<label class="slot ${taken ? 'off' : ''}">
+      <input type="radio" name="slot" value="${s}" ${taken ? 'disabled' : ''}> ${s}${taken ? ' (full)' : ''}</label>`;
+  }).join('');
+}
+svc.addEventListener('change', loadSlots);
+dt.addEventListener('change', loadSlots);
+</script>
+{% endblock %}
